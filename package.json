@@ -1,0 +1,16 @@
+{
+  "name": "wilderbeasts-wolf-rarity",
+  "version": "1.0.0",
+  "description": "A website for tracking wolf rarity.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "MooCowGalaxy",
+  "license": "ISC",
+  "dependencies": {
+    "csv": "^6.0.5",
+    "ejs": "^3.1.7",
+    "express": "^4.17.3"
+  }
+}

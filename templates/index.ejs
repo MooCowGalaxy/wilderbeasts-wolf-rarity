@@ -1,0 +1,112 @@
+<html lang="en-US">
+<head>
+    <title>Wilder Beasts Wolf Rarity Tool</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <style>
+        * {
+            font-family: 'Nunito';
+        }
+        .x {
+            background-color: #bfd8ff;
+            border-width: 1px;
+            border-color: #5496ff;
+            border-style: solid;
+            border-radius: 10px;
+            padding: 6px;
+        }
+        .t1 {
+            font-size: 14px;
+            margin: 0;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .t {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            text-align: center;
+        }
+        .p {
+            font-size: 16px;
+            margin: 0;
+        }
+    </style>
+    <script>
+        function onInput() {
+            if (event.key === 'Enter') {
+                update()
+            }
+        }
+        function getPercentage(number, total) {
+            return Math.round((number / total) * 10000) / 100
+        }
+        function update() {
+            let wolf = parseInt($('#wolfId').val())
+            $.ajax({
+                url: `/api/wolf/${wolf}`,
+                method: 'GET',
+                success: function (data) {
+                    if (!data.success) {
+                        alert(data.error)
+                        return
+                    }
+                    let ranking = data.ranking
+                    let rarity = data.rarity
+                    let attributes = data.attributes
+                    const attributeList = data.attributeList
+                    let total = [2000, 1000, 333][['Organic', 'Hybrid', 'Mech'].indexOf(attributes[0])]
+                    $('#stats').empty()
+                    $('#ranking').html(`
+            <p style="font-size: 30px"><b>Rarity ranking: </b><span style="text-shadow: 0 0 10px #fff, 0 0 20px #55f, 0 0 40px #55f">#${ranking.rarityRanking}</span></p>
+            <p style="font-size: 28px"><b>${attributes[0]} ranking: </b><span>#${ranking.typeRarityRanking}</span></p>`)
+
+                    for (let i = 0; i < attributeList.length; i++) {
+                        let attributeName = attributeList[i]
+                        if (attributeName === 'Type') continue;
+                        let attribute = attributes[i]
+                        if (attribute === 'None') continue;
+                        let rarityPercentageOverall = getPercentage(rarity.overall[attributeName], 3333)
+                        let rarityPercentageType = getPercentage(rarity.type[attributeName], total)
+
+                        $('#stats').append(`
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <div class="x h-100">
+                    <p class="t1">${attributeName}</p>
+                    <p class="t">${attribute}</p>
+                    <p class="p">Overall rarity: <b>${rarityPercentageOverall}%</b> (<b>${rarity.overall[attributeName]}</b>/3333)<br>${attributes[0]} rarity: <b>${rarityPercentageType}%</b> (<b>${rarity.type[attributeName]}</b>/${total})</p>
+                </div>
+            </div>`)
+                    }
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+    <nav class="navbar bg-light navbar-light navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Wilder Beasts Wolf Rarity</a>
+        </div>
+    </nav>
+    <div class="container-fluid mt-3">
+        <p>Input your Wolf # below and see statistics on its traits!</p>
+        <div class="form-floating mb-3" style="max-width: 300px">
+            <input type="number" class="form-control" id="wolfId" placeholder="706" onkeydown="onInput(this)">
+            <label for="wolfId">Wolf #</label>
+        </div>
+        <hr>
+        <div id="ranking">
+        </div>
+        <div class="row g-3" id="stats">
+        </div>
+    </div>
+</body>
+</html>

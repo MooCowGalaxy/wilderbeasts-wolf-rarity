@@ -83,10 +83,9 @@
         }
     </style>
     <script>
+        let attributes, attributeList, wolves, rarityRanking;
         function onInput() {
-            if (event.key === 'Enter') {
-                update()
-            }
+            setTimeout(() => update(), 10)
         }
         function getPercentage(number, total) {
             return Math.round((number / total) * 10000) / 100
@@ -94,49 +93,76 @@
         function min(a, b) {
             return a < b ? a : b
         }
+        function refreshCache() {
+            let cache = window.localStorage.getItem('cache')
+            if (cache === null) {
+                $.ajax({
+                    url: '/api/wolves',
+                    method: 'GET',
+                    success: function (d) {
+                        window.localStorage.setItem('cache', JSON.stringify(d))
+                        let data = d
+                        attributes = data.attributes
+                        attributeList = data.attributeList
+                        wolves = data.wolves
+                        rarityRanking = data.rarityRanking
+                    }
+                })
+            } else {
+                let data = JSON.parse(cache)
+                attributes = data.attributes
+                attributeList = data.attributeList
+                wolves = data.wolves
+                rarityRanking = data.rarityRanking
+            }
+        }
+        refreshCache()
         function update() {
-            let wolf = parseInt($('#wolfId').val())
-            $.ajax({
-                url: `/api/wolf/${wolf}`,
-                method: 'GET',
-                success: function (data) {
-                    if (!data.success) {
-                        alert(data.error)
-                        return
-                    }
-                    let ranking = data.ranking
-                    let rarity = data.rarity
-                    let attributes = data.attributes
-                    const attributeList = data.attributeList
-                    let total = [2000, 1000, 333][['Organic', 'Hybrid', 'Mech'].indexOf(attributes[0])]
-                    $('#stats').empty()
-                    $('#ranking').html(`
-            <p style="font-size: 30px"><b>Rarity ranking: </b><span style="text-shadow: 0 0 10px #fff, 0 0 20px #55f, 0 0 40px #55f">#${ranking.rarityRanking}</span></p>
-            <p style="font-size: 28px"><b>${attributes[0]} ranking: </b><span>#${ranking.typeRarityRanking}</span></p>`)
+            let id = $('#wolfId').val().toString()
+            if (!wolves[id]) {
+                $('#stats').empty()
+                $('#ranking').empty()
+                return
+            }
+            let wolfAttributes = wolves[id]
+            let ranking = {}
+            ranking.rarityRanking = parseInt(rarityRanking.total[id])
+            ranking.typeRarityRanking = rarityRanking[wolfAttributes[0].toLowerCase()].indexOf(id) + 1
+            let attributesTotal = {}
+            let attributesType = {}
+            for (let i = 0; i < attributeList.length; i++) {
+                let attributeName = attributeList[i]
+                let property = wolfAttributes[i]
+                attributesTotal[attributeName] = attributes.total[attributeName][property]
+                attributesType[attributeName] = attributes[wolfAttributes[0].toLowerCase()][attributeName][property]
+            }
+            let total = [2000, 1000, 333][['Organic', 'Hybrid', 'Mech'].indexOf(wolfAttributes[0])]
+            $('#stats').empty()
+            $('#ranking').html(`
+    <p style="font-size: 30px"><b>Rarity ranking: </b><span style="text-shadow: 0 0 10px #fff, 0 0 20px #55f, 0 0 40px #55f">#${ranking.rarityRanking}</span></p>
+    <p style="font-size: 28px"><b>${wolfAttributes[0]} ranking: </b><span>#${ranking.typeRarityRanking}</span></p>`)
 
-                    for (let i = 0; i < attributeList.length; i++) {
-                        let attributeName = attributeList[i]
-                        let attribute = attributes[i]
-                        if (attribute === 'None') continue;
-                        let rarityPercentageOverall = getPercentage(rarity.overall[attributeName], 3333)
-                        let rarityPercentageType = getPercentage(rarity.type[attributeName], total)
-                        let color = ''
-                        if (rarityPercentageOverall <= 0.5) color = 'rainbow'
-                        else if (rarityPercentageOverall <= 2) color = 'gold'
-                        else if (rarityPercentageOverall <= 4) color = 'silver'
-                        else if (rarityPercentageOverall <= 6) color = 'bronze'
+            for (let i = 0; i < attributeList.length; i++) {
+                let attributeName = attributeList[i]
+                let attribute = wolfAttributes[i]
+                if (attribute === 'None') continue;
+                let rarityPercentageOverall = getPercentage(attributesTotal[attributeName], 3333)
+                let rarityPercentageType = getPercentage(attributesType[attributeName], total)
+                let color = ''
+                if (rarityPercentageOverall <= 0.5) color = 'rainbow'
+                else if (rarityPercentageOverall <= 2) color = 'gold'
+                else if (rarityPercentageOverall <= 4) color = 'silver'
+                else if (rarityPercentageOverall <= 7.5) color = 'bronze'
 
-                        $('#stats').append(`
-            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                <div class="x h-100 ${color}">
-                    <p class="t1">${attributeName}</p>
-                    <p class="t"><a class="a" href="https://opensea.io/assets/wilderbeasts-wolf?search[stringTraits][0][name]=${attributeName.replaceAll(' ', '%20')}&search[stringTraits][0][values][0]=${attribute.replaceAll(' ', '%20')}&search[sortAscending]=true&search[sortBy]=PRICE" target="_blank" rel="noopener noreferrer">${attribute}</a></p>
-                    <p class="p">Overall rarity: <b>${rarityPercentageOverall}%</b> (<b>${rarity.overall[attributeName]}</b>/3333)<br>${attributes[0]} rarity: <b>${rarityPercentageType}%</b> (<b>${rarity.type[attributeName]}</b>/${total})</p>
-                </div>
-            </div>`)
-                    }
-                }
-            })
+                $('#stats').append(`
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+        <div class="x h-100 ${color}">
+            <p class="t1">${attributeName}</p>
+            <p class="t"><a class="a" href="https://opensea.io/assets/wilderbeasts-wolf?search[stringTraits][0][name]=${attributeName.replaceAll(' ', '%20')}&search[stringTraits][0][values][0]=${attribute.replaceAll(' ', '%20')}&search[sortAscending]=true&search[sortBy]=PRICE" target="_blank" rel="noopener noreferrer">${attribute}</a></p>
+            <p class="p">Overall rarity: <b>${rarityPercentageOverall}%</b> (<b>${attributesTotal[attributeName]}</b>/3333)<br>${wolfAttributes[0]} rarity: <b>${rarityPercentageType}%</b> (<b>${attributesType[attributeName]}</b>/${total})</p>
+        </div>
+    </div>`)
+            }
         }
     </script>
 </head>

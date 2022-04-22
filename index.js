@@ -3,6 +3,7 @@ const ejs = require('ejs')
 const { port } = require('./config.json')
 
 const {attributes, attributeList, wolves, rarityRanking} = require('./rarity.json')
+const rarity = require('./rarity.json')
 
 const app = express()
 
@@ -20,6 +21,9 @@ function renderFile(filename, data = {}) {
 
 app.get('/', async (req, res) => {
     res.send(await renderFile('index'))
+})
+app.get('/api/wolves', async (req, res) => {
+    res.json(rarity)
 })
 app.get('/api/wolf/:id', async (req, res) => {
     const id = req.params.id

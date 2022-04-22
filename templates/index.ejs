@@ -38,6 +38,24 @@
             font-size: 16px;
             margin: 0;
         }
+        .rainbow {
+            background:
+                linear-gradient(rgba(255,0,0,0.3) 0%, rgba(255,154,0,0.3) 10%, rgba(208,222,33,0.3) 20%, rgba(79,220,74,0.3) 30%, rgba(63,218,216,0.3) 40%, rgba(47,201,226,0.3) 50%, rgba(28,127,238,0.3) 60%, rgba(95,21,242,0.3) 70%, rgba(186,12,248,0.3) 80%, rgba(251,7,217,0.3) 90%, rgba(255,0,0,0.3) 100%)
+                0 0/100% 200%;
+            animation: rainbow 2s linear infinite;
+        }
+        @keyframes rainbow {
+            to {background-position:0 -200%}
+        }
+        .bronze {
+            background-color: rgba(205, 127, 50, 0.65)
+        }
+        .silver {
+            background-color: #ccc;
+        }
+        .gold {
+            background-color: #FFD700
+        }
     </style>
     <script>
         function onInput() {
@@ -47,6 +65,9 @@
         }
         function getPercentage(number, total) {
             return Math.round((number / total) * 10000) / 100
+        }
+        function min(a, b) {
+            return a < b ? a : b
         }
         function update() {
             let wolf = parseInt($('#wolfId').val())
@@ -70,15 +91,19 @@
 
                     for (let i = 0; i < attributeList.length; i++) {
                         let attributeName = attributeList[i]
-                        if (attributeName === 'Type') continue;
                         let attribute = attributes[i]
                         if (attribute === 'None') continue;
                         let rarityPercentageOverall = getPercentage(rarity.overall[attributeName], 3333)
                         let rarityPercentageType = getPercentage(rarity.type[attributeName], total)
+                        let color = ''
+                        if (rarityPercentageOverall <= 0.5) color = 'rainbow'
+                        else if (rarityPercentageOverall <= 2) color = 'gold'
+                        else if (rarityPercentageOverall <= 4) color = 'silver'
+                        else if (rarityPercentageOverall <= 6) color = 'bronze'
 
                         $('#stats').append(`
             <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                <div class="x h-100">
+                <div class="x h-100 ${color}">
                     <p class="t1">${attributeName}</p>
                     <p class="t">${attribute}</p>
                     <p class="p">Overall rarity: <b>${rarityPercentageOverall}%</b> (<b>${rarity.overall[attributeName]}</b>/3333)<br>${attributes[0]} rarity: <b>${rarityPercentageType}%</b> (<b>${rarity.type[attributeName]}</b>/${total})</p>

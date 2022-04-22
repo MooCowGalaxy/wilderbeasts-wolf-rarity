@@ -60,6 +60,27 @@
         .gold {
             background-color: #FFD700
         }
+        .footer {
+            z-index: 100;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            background-color: #ccc;
+            user-select: none;
+            padding: 3px;
+            display: flex;
+            flex-flow: row;
+            flex-wrap: wrap;
+        }
+        .footer > p {
+            font-size: 15px;
+            flex: 0 0 auto;
+            margin: 0;
+        }
+        .footer > div {
+            flex: 1 0 0;
+        }
     </style>
     <script>
         function onInput() {
@@ -136,6 +157,11 @@
         </div>
         <div class="row g-3" id="stats">
         </div>
+    </div>
+    <div class="footer">
+        <p class="float-left"><b>Made with &#x2764; by moo</b></p>
+        <div></div>
+        <p class="float-right"><a href="https://wilderworld.com" target="_blank" rel="noopener noreferrer">Wilder World</a></p>
     </div>
 </body>
 </html>

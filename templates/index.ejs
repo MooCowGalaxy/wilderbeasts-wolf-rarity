@@ -62,16 +62,15 @@
         }
         .footer {
             z-index: 100;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100vw;
+            width: 100%;
             background-color: #ccc;
             user-select: none;
             padding: 3px;
+            margin-top: 5px;
             display: flex;
             flex-flow: row;
             flex-wrap: wrap;
+            flex: 0 0 auto;
         }
         .footer > p {
             font-size: 15px;
@@ -79,6 +78,14 @@
             margin: 0;
         }
         .footer > div {
+            flex: 1 0 0;
+        }
+        body {
+            display: flex;
+            flex-flow: column;
+            height: 100vh;
+        }
+        .content {
             flex: 1 0 0;
         }
     </style>
@@ -167,21 +174,23 @@
     </script>
 </head>
 <body>
-    <nav class="navbar bg-light navbar-light navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Wilder Beasts Wolf Rarity</a>
-        </div>
-    </nav>
-    <div class="container-fluid mt-3">
-        <p>Input your Wolf # below and see statistics on its traits!</p>
-        <div class="form-floating mb-3" style="max-width: 300px">
-            <input type="number" class="form-control" id="wolfId" placeholder="706" onkeydown="onInput(this)">
-            <label for="wolfId">Wolf #</label>
-        </div>
-        <hr>
-        <div id="ranking">
-        </div>
-        <div class="row g-3" id="stats">
+    <div class="content">
+        <nav class="navbar bg-light navbar-light navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">Wilder Beasts Wolf Rarity</a>
+            </div>
+        </nav>
+        <div class="container-fluid mt-3">
+            <p>Input your Wolf # below and see statistics on its traits!</p>
+            <div class="form-floating mb-3" style="max-width: 300px">
+                <input type="number" class="form-control" id="wolfId" placeholder="706" onkeydown="onInput(this)">
+                <label for="wolfId">Wolf #</label>
+            </div>
+            <hr>
+            <div id="ranking">
+            </div>
+            <div class="row g-3" id="stats">
+            </div>
         </div>
     </div>
     <div class="footer">

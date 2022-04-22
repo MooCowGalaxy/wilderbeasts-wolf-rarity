@@ -38,6 +38,10 @@
             font-size: 16px;
             margin: 0;
         }
+        .a {
+            color: #000;
+            text-decoration: none;
+        }
         .rainbow {
             background:
                 linear-gradient(rgba(255,0,0,0.3) 0%, rgba(255,154,0,0.3) 10%, rgba(208,222,33,0.3) 20%, rgba(79,220,74,0.3) 30%, rgba(63,218,216,0.3) 40%, rgba(47,201,226,0.3) 50%, rgba(28,127,238,0.3) 60%, rgba(95,21,242,0.3) 70%, rgba(186,12,248,0.3) 80%, rgba(251,7,217,0.3) 90%, rgba(255,0,0,0.3) 100%)
@@ -105,7 +109,7 @@
             <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
                 <div class="x h-100 ${color}">
                     <p class="t1">${attributeName}</p>
-                    <p class="t">${attribute}</p>
+                    <p class="t"><a class="a" href="https://opensea.io/assets/wilderbeasts-wolf?search[stringTraits][0][name]=${attributeName.replaceAll(' ', '%20')}&search[stringTraits][0][values][0]=${attribute.replaceAll(' ', '%20')}&search[sortAscending]=true&search[sortBy]=PRICE" target="_blank" rel="noopener noreferrer">${attribute}</a></p>
                     <p class="p">Overall rarity: <b>${rarityPercentageOverall}%</b> (<b>${rarity.overall[attributeName]}</b>/3333)<br>${attributes[0]} rarity: <b>${rarityPercentageType}%</b> (<b>${rarity.type[attributeName]}</b>/${total})</p>
                 </div>
             </div>`)

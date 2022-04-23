@@ -88,9 +88,27 @@
         .content {
             flex: 1 0 0;
         }
+        #loading {
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-flow: column;
+            position: absolute;
+            z-index: 100;
+            background-color: #fff;
+        }
     </style>
     <script>
         let attributes, attributeList, wolves, rarityRanking, ipfsData;
+        let isReady = false;
+        $(document).ready(() => {
+            isReady = true
+            if (loadCount === 2) {
+                $('#loading').remove()
+            }
+        })
         function onInput() {
             setTimeout(() => update(), 10)
         }
@@ -99,6 +117,13 @@
         }
         function min(a, b) {
             return a < b ? a : b
+        }
+        let loadCount = 0
+        function load() {
+            loadCount++
+            if (isReady && loadCount === 2) {
+                $('#loading').remove()
+            }
         }
         function refreshCache() {
             let cache = window.localStorage.getItem('cache')
@@ -113,6 +138,7 @@
                         attributeList = data.attributeList
                         wolves = data.wolves
                         rarityRanking = data.rarityRanking
+                        load()
                     }
                 })
             } else {
@@ -121,6 +147,7 @@
                 attributeList = data.attributeList
                 wolves = data.wolves
                 rarityRanking = data.rarityRanking
+                load()
             }
             let ipfs = window.localStorage.getItem('ipfs')
             if (ipfs === null) {
@@ -130,9 +157,13 @@
                     success: function (d) {
                         window.localStorage.setItem('ipfs', JSON.stringify(d))
                         ipfsData = d
+                        load()
                     }
                 })
-            } else ipfsData = JSON.parse(ipfs)
+            } else {
+                ipfsData = JSON.parse(ipfs)
+                load()
+            }
         }
         refreshCache()
         function update() {
@@ -200,6 +231,16 @@
             </div>
         </nav>
         <div class="container-fluid mt-3">
+            <div id="loading">
+                <div style="flex: 1 0 0"></div>
+                <div style="flex: 0 0 auto" class="m-3">
+                    <div class="spinner-border d-inline-block" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h2 class="d-inline-block">&nbsp;Fetching data...</h2>
+                </div>
+                <div style="flex: 1 0 0"></div>
+            </div>
             <p>Input your Wolf # below and see statistics on its traits!</p>
             <div class="form-floating mb-3" style="max-width: 300px">
                 <input type="number" class="form-control" id="wolfId" placeholder="706" onkeydown="onInput(this)">

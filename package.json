@@ -9,6 +9,7 @@
   "author": "MooCowGalaxy",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.26.1",
     "csv": "^6.0.5",
     "ejs": "^3.1.7",
     "express": "^4.17.3"

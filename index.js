@@ -4,6 +4,7 @@ const { port } = require('./config.json')
 
 const {attributes, attributeList, wolves, rarityRanking} = require('./rarity.json')
 const rarity = require('./rarity.json')
+const ipfsData = require('./ipfs.json')
 
 const app = express()
 
@@ -24,6 +25,9 @@ app.get('/', async (req, res) => {
 })
 app.get('/api/wolves', async (req, res) => {
     res.json(rarity)
+})
+app.get('/api/ipfs', async (req, res) => {
+    res.json(ipfsData)
 })
 app.get('/api/wolf/:id', async (req, res) => {
     const id = req.params.id

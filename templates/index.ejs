@@ -90,7 +90,7 @@
         }
     </style>
     <script>
-        let attributes, attributeList, wolves, rarityRanking;
+        let attributes, attributeList, wolves, rarityRanking, ipfsData;
         function onInput() {
             setTimeout(() => update(), 10)
         }
@@ -122,6 +122,17 @@
                 wolves = data.wolves
                 rarityRanking = data.rarityRanking
             }
+            let ipfs = window.localStorage.getItem('ipfs')
+            if (ipfs === null) {
+                $.ajax({
+                    url: '/api/ipfs',
+                    method: 'GET',
+                    success: function (d) {
+                        window.localStorage.setItem('ipfs', JSON.stringify(d))
+                        ipfsData = d
+                    }
+                })
+            } else ipfsData = JSON.parse(ipfs)
         }
         refreshCache()
         function update() {
@@ -129,6 +140,7 @@
             if (!wolves[id]) {
                 $('#stats').empty()
                 $('#ranking').empty()
+                $('#download').empty()
                 return
             }
             let wolfAttributes = wolves[id]
@@ -148,6 +160,13 @@
             $('#ranking').html(`
     <p style="font-size: 30px"><b>Rarity ranking: </b><span style="text-shadow: 0 0 10px #fff, 0 0 20px #55f, 0 0 40px #55f">#${ranking.rarityRanking}</span></p>
     <p style="font-size: 28px"><b>${wolfAttributes[0]} ranking: </b><span>#${ranking.typeRarityRanking}</span></p>`)
+            let ipfs = ipfsData[id]
+            let animationURL = `https://res.cloudinary.com/fact0ry/video/upload/c_fit,f_auto,h_1000,w_1000/zns/${ipfs.animation_url.split('//')[1]}.webm`
+            let imageURL = `https://res.cloudinary.com/fact0ry/image/upload/c_fit,h_256,q_60,w_256/v1/zns/${ipfs.image.split('//')[1]}`
+            $('#download').html(`
+                <a class="btn btn-primary btn-lg" href="${animationURL}" target="_blank" rel="noopener noreferrer"><i class="bi bi-arrow-up-right-square"></i> Download Animation</a>
+                <a class="btn btn-primary btn-lg" href="${imageURL}" target="_blank" rel="noopener noreferrer"><i class="bi bi-arrow-up-right-square"></i> Download PFP</a>
+                <hr>`)
 
             for (let i = 0; i < attributeList.length; i++) {
                 let attributeName = attributeList[i]
@@ -188,6 +207,8 @@
             </div>
             <hr>
             <div id="ranking">
+            </div>
+            <div id="download">
             </div>
             <div class="row g-3" id="stats">
             </div>

@@ -196,7 +196,7 @@
             let imageURL = `https://res.cloudinary.com/fact0ry/image/upload/c_fit,h_256,q_60,w_256/v1/zns/${ipfs.image.split('//')[1]}`
             $('#download').html(`
                 <a class="btn btn-primary btn-lg mb-2" href="${animationURL}" target="_blank" rel="noopener noreferrer"><i class="bi bi-arrow-up-right-square"></i> Download Animation</a>
-                <a class="btn btn-primary btn-lg" href="${imageURL}" target="_blank" rel="noopener noreferrer"><i class="bi bi-arrow-up-right-square"></i> Download PFP</a>
+                <a class="btn btn-primary btn-lg mb-2" href="${imageURL}" target="_blank" rel="noopener noreferrer"><i class="bi bi-arrow-up-right-square"></i> Download PFP</a>
                 <hr>`)
 
             for (let i = 0; i < attributeList.length; i++) {

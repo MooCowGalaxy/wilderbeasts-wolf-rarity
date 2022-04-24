@@ -34,18 +34,18 @@ app.get('/:id', async (req, res) => {
     for (let i = 0; i < attributeList.length; i++) {
         let attributeName = attributeList[i]
         let attribute = wolf[i]
-        if (attribute !== 'None') attributesList.push(`${attributeName}: __${attribute}__ (${getPercentage(attributes.total[attributeName][attribute], 3333)}%)`)
+        if (attribute !== 'None') attributesList.push(`${attributeName}: ${attribute} (${getPercentage(attributes.total[attributeName][attribute], 3333)}%)`)
     }
     let attributeText = attributesList.join('\n')
     res.send(await renderFile('index', {
         wolf: {
             id,
-            description: `**Wolf #${id}**
+            description: `Wolf #${id}
 Rarity: #${rarityRanking.total[id]} overall, #${rarityRanking[wolf[0].toLowerCase()].indexOf(id) + 1} for ${wolf[0].toLowerCase()}s
 
 Traits:
 ${attributeText}`,
-            image: `https://res.cloudinary.com/fact0ry/image/upload/c_fit,h_256,q_60,w_256/v1/zns/${ipfsData[id].image.split('//')[1]}`
+            image: `https://res.cloudinary.com/fact0ry/image/upload/c_fit,h_100,q_60,w_100/v1/zns/${ipfsData[id].image.split('//')[1]}`
         }
     }))
 })

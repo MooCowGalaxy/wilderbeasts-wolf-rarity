@@ -19,9 +19,35 @@ function renderFile(filename, data = {}) {
         })
     })
 }
+function getPercentage(number, total) {
+    return Math.round((number / total) * 10000) / 100
+}
 
 app.get('/', async (req, res) => {
-    res.send(await renderFile('index'))
+    res.send(await renderFile('index', {wolf: null}))
+})
+app.get('/:id', async (req, res) => {
+    let id = req.params.id
+    if (!wolves[id]) return res.send(await renderFile('index', {wolf: null}))
+    let wolf = wolves[id]
+    let attributesList = []
+    for (let i = 0; i < attributeList.length; i++) {
+        let attributeName = attributeList[i]
+        let attribute = wolf[i]
+        if (attribute !== 'None') attributesList.push(`${attributeName}: __${attribute}__ (${getPercentage(attributes.total[attributeName][attribute], 3333)}%)`)
+    }
+    let attributeText = attributesList.join('\n')
+    res.send(await renderFile('index', {
+        wolf: {
+            id,
+            description: `**Wolf #${id}**
+Rarity: #${rarityRanking.total[id]} overall, #${rarityRanking[wolf[0].toLowerCase()].indexOf(id) + 1} for ${wolf[0].toLowerCase()}s
+
+Traits:
+${attributeText}`,
+            image: `https://res.cloudinary.com/fact0ry/image/upload/c_fit,h_256,q_60,w_256/v1/zns/${ipfsData[id].image.split('//')[1]}`
+        }
+    }))
 })
 app.get('/api/wolves', async (req, res) => {
     res.json(rarity)

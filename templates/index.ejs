@@ -1,6 +1,19 @@
 <html lang="en-US">
 <head>
-    <title>Wilder Beasts Wolf Rarity Tool</title>
+    <% if (wolf) { %>
+        <title>Wilder Beasts Wolf #<%= wolf.id %></title>
+    <% } else { %>
+        <title>Wilder Beasts Wolf Rarity Tool</title>
+    <% } %>
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://wolf.mcgx.tech">
+    <meta property="og:site_name" content="Wilder Beasts Wolf Rarity Tool">
+    <meta property="og:description" content="<%= wolf ? wolf.description : "A simple tool that allows you to search up any wolf and view its rarity, stats, and download links." %>">
+    <meta property="description" content="<%= wolf ? wolf.description : "A simple tool that allows you to search up any wolf and view its rarity, stats, and download links." %>">
+    <% if (wolf) { %>
+        <meta property="og:image" content="<%= wolf.image %>">
+        <meta property="image" content="<%= wolf.image %>">
+    <% } %>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -101,16 +114,16 @@
         }
     </style>
     <script>
-        let attributes, attributeList, wolves, rarityRanking, ipfsData;
+        let attributes, attributeList, wolves, rarityRanking, ipfsData, previousTimeout;
         let isReady = false;
         $(document).ready(() => {
             isReady = true
             if (loadCount === 2) {
-                $('#loading').remove()
+                initialize()
             }
         })
         function onInput() {
-            setTimeout(() => update(), 10)
+            setTimeout(() => update(), 2)
         }
         function getPercentage(number, total) {
             return Math.round((number / total) * 10000) / 100
@@ -118,11 +131,20 @@
         function min(a, b) {
             return a < b ? a : b
         }
+        function initialize() {
+            $('#loading').remove()
+            if (window.location.pathname.length > 1 && window.location.pathname.length <= 5) {
+                let id = parseInt(window.location.pathname.slice(1))
+                if (isNaN(id)) return;
+                $('#wolfId').val(id.toString())
+                update()
+            }
+        }
         let loadCount = 0
         function load() {
             loadCount++
             if (isReady && loadCount === 2) {
-                $('#loading').remove()
+                initialize()
             }
         }
         function refreshCache() {
@@ -174,6 +196,8 @@
                 $('#download').empty()
                 return
             }
+            if (previousTimeout) clearTimeout(previousTimeout)
+            previousTimeout = setTimeout(() => history.pushState({}, null, `/${id}`), 750)
             let wolfAttributes = wolves[id]
             let ranking = {}
             ranking.rarityRanking = parseInt(rarityRanking.total[id])
